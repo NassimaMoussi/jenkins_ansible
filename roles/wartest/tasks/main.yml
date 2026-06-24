@@ -1,0 +1,19 @@
+---
+- name: Install pip
+  apt:
+    name: python3-pip
+    state: present
+    update_cache: yes
+
+- name: Install docker python library
+  pip:
+    name:
+      - docker
+      - docker-compose
+
+- name: Run wartest container
+  docker_container:
+    name: wartest
+    image: "{{ image }}"
+    state: started
+    restart_policy: always
