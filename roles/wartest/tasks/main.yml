@@ -17,3 +17,5 @@
     image: "{{ image }}"
     state: started
     restart_policy: always
+    published_ports:
+      - "8085:8080"
