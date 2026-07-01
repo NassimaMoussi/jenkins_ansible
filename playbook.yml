@@ -1,6 +1,30 @@
----
 - hosts: all
-  become: true
-  roles:
-    - nginx
+  become: yes
+  vars:
+    # Le mapping dynamique pour gérer tes différents utilisateurs SSH automatiquement
+    node_users:
+      192.168.25.132: "node1"
+      192.168.25.133: "node2"
+      
+  # Ansible choisit le bon utilisateur en fonction de l'IP envoyée par Consul
+  remote_user: "{{ node_users[inventory_hostname] | default('jenkins') }}"
+
+  tasks:
+    - name: Installation de Nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Demarrage de Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Personnalisation de la page index.html avec la variable Jenkins
+      copy:
+        content: "<h1>Bienvenue sur le serveur : {{ mavariable }}</h1>"
+        dest: /var/www/html/index.html
+        mode: '0644'
 
